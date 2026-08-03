@@ -94,9 +94,7 @@ const stuffActivity = {
         Prerequisite: [
             "Luzi_CanWalk",
             "UseHands",
-            Prereqs.ActingCheck(
-                (acting) => ChatRoomLeashList.includes(acting.MemberNumber) || ChatRoomCanBeLeashed(acting)
-            ),
+            Prereqs.ActingCheck((acting) => ChatRoomCanBeLeashed(acting)),
             Prereqs.any(
                 ...pairiGroups.flatMap((group) =>
                     items.flatMap((i) => [
