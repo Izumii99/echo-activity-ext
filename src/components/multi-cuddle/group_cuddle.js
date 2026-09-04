@@ -15,13 +15,13 @@ function injectInvisibleAsset(groupName, assetName) {
     const template = group.Asset.find(a => a.Wear) ?? group.Asset[0];
     if (!template) return;
 
-    const cloned = { ...template,
+    const cloned = /** @type {any} */ ({ ...template,
         Name: assetName,
         Description: assetName,
         Visible: false,
         Value: -1,
         Random: false,
-        Effect: [],
+        Effect: /** @type {any[]} */ ([]),
         AllowLock: false,
         Extended: false,
         Restrain: false,
@@ -29,7 +29,7 @@ function injectInvisibleAsset(groupName, assetName) {
         Wear: true,
         Group: group,
         DynamicGroupName: groupName,
-    };
+    });
 
     // BC menggunakan AssetMap (global Map) untuk lookup, BUKAN iterasi group.Asset
     // Harus update keduanya agar AssetGet() dan InventoryWear() bisa menemukan asset ini
@@ -43,9 +43,9 @@ function injectInvisibleAsset(groupName, assetName) {
  * @param {object} arg
  * @param {XCharacter} arg.next
  * @param {XCharacter} arg.prev
- * @param {string} groupName
- * @param {string} assetName
- * @param {"follow"|"lead"} type
+ * @param {string} arg.groupName
+ * @param {string} arg.assetName
+ * @param {"follow"|"lead"} arg.type
  */
 function doPairing({ next, prev, groupName, assetName, type }) {
     const asset = AssetGet("Female3DCG", groupName, assetName);
