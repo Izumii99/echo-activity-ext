@@ -30,7 +30,13 @@ function injectInvisibleAsset(groupName, assetName) {
         Group: group,
         DynamicGroupName: groupName,
     };
+
+    // BC menggunakan AssetMap (global Map) untuk lookup, BUKAN iterasi group.Asset
+    // Harus update keduanya agar AssetGet() dan InventoryWear() bisa menemukan asset ini
     group.Asset.push(cloned);
+    /* global AssetMap, Asset */
+    if (typeof AssetMap !== "undefined") AssetMap.set(`${groupName}/${assetName}`, cloned);
+    if (typeof Asset !== "undefined" && Array.isArray(Asset)) Asset.push(cloned);
 }
 
 /**
