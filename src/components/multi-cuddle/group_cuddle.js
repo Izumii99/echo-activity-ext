@@ -47,7 +47,7 @@ function injectInvisibleAsset(groupName, assetName) {
  * @param {string} arg.assetName
  * @param {"follow"|"lead"} arg.type
  */
-function doPairing({ next, prev, groupName, assetName, type }) {
+function doPairing({ next, prev, groupName, assetName }) {
     const asset = AssetGet("Female3DCG", groupName, assetName);
     console.log(`[GroupCuddle] doPairing — asset:`, asset, `| prev:`, prev?.Name, `| next:`, next?.Name, `| Player:`, Player?.Name);
     if (!asset) {
@@ -57,9 +57,9 @@ function doPairing({ next, prev, groupName, assetName, type }) {
     monadic(asset).then((a) => {
         console.log("[GroupCuddle] monadic resolved, calling wearAndPair...");
         if (prev.MemberNumber === Player.MemberNumber) {
-            ChatRoomOrderTools.wearAndPair(Player, a, { nextCharacter: next.MemberNumber }, type);
+            ChatRoomOrderTools.wearAndPair(Player, a, { nextCharacter: next.MemberNumber }, "follow");
         } else if (next.MemberNumber === Player.MemberNumber) {
-            ChatRoomOrderTools.wearAndPair(Player, a, { prevCharacter: prev.MemberNumber }, type);
+            ChatRoomOrderTools.wearAndPair(Player, a, { prevCharacter: prev.MemberNumber }, "lead");
         }
         console.log("[GroupCuddle] After wearAndPair, ItemMisc/ItemArms:", InventoryGet(Player, groupName));
         ChatRoomCharacterUpdate(Player);
@@ -82,11 +82,11 @@ const lapHugActivity = {
         if (TargetCharacter === player.MemberNumber) {
             if (!ServerChatRoomGetAllowItem(sender, player)) return;
             Tools.findCharacter("SourceC", SourceCharacter).then((source) =>
-                doPairing({ next: player, prev: source, groupName: "ItemMisc", assetName: "GroupHugLap", type: "lead" })
+                doPairing({ next: player, prev: source, groupName: "ItemMisc", assetName: "GroupHugLap" })
             );
         } else if (SourceCharacter === player.MemberNumber) {
             Tools.findCharacter("TargetC", TargetCharacter).then((target) =>
-                doPairing({ next: target, prev: player, groupName: "ItemMisc", assetName: "GroupHugLap", type: "lead" })
+                doPairing({ next: target, prev: player, groupName: "ItemMisc", assetName: "GroupHugLap" })
             );
         }
     },
@@ -117,11 +117,11 @@ const sideHugActivity = {
         if (TargetCharacter === player.MemberNumber) {
             if (!ServerChatRoomGetAllowItem(sender, player)) return;
             Tools.findCharacter("SourceC", SourceCharacter).then((source) =>
-                doPairing({ next: player, prev: source, groupName: "ItemArms", assetName: "GroupHugSide", type: "lead" })
+                doPairing({ next: player, prev: source, groupName: "ItemArms", assetName: "GroupHugSide" })
             );
         } else if (SourceCharacter === player.MemberNumber) {
             Tools.findCharacter("TargetC", TargetCharacter).then((target) =>
-                doPairing({ next: target, prev: player, groupName: "ItemArms", assetName: "GroupHugSide", type: "lead" })
+                doPairing({ next: target, prev: player, groupName: "ItemArms", assetName: "GroupHugSide" })
             );
         }
     },
