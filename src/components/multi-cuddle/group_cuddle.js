@@ -42,12 +42,20 @@ function injectInvisibleAsset(groupName, assetName) {
  * @param {"follow"|"lead"} type
  */
 function doPairing({ next, prev, groupName, assetName, type }) {
-    monadic(AssetGet("Female3DCG", groupName, assetName)).then((asset) => {
+    const asset = AssetGet("Female3DCG", groupName, assetName);
+    console.log(`[GroupCuddle] doPairing — asset:`, asset, `| prev:`, prev?.Name, `| next:`, next?.Name, `| Player:`, Player?.Name);
+    if (!asset) {
+        console.error("[GroupCuddle] Asset not found, aborting pairing:", groupName, assetName);
+        return;
+    }
+    monadic(asset).then((a) => {
+        console.log("[GroupCuddle] monadic resolved, calling wearAndPair...");
         if (prev.MemberNumber === Player.MemberNumber) {
-            ChatRoomOrderTools.wearAndPair(Player, asset, { nextCharacter: next.MemberNumber }, type);
+            ChatRoomOrderTools.wearAndPair(Player, a, { nextCharacter: next.MemberNumber }, type);
         } else if (next.MemberNumber === Player.MemberNumber) {
-            ChatRoomOrderTools.wearAndPair(Player, asset, { prevCharacter: prev.MemberNumber }, type);
+            ChatRoomOrderTools.wearAndPair(Player, a, { prevCharacter: prev.MemberNumber }, type);
         }
+        console.log("[GroupCuddle] After wearAndPair, ItemMisc/ItemArms:", InventoryGet(Player, groupName));
         ChatRoomCharacterUpdate(Player);
     });
 }
@@ -128,6 +136,11 @@ const itemsSide = [{ prev: "GroupHugSide", next: "GroupHugSide" }];
 export default function () {
     injectInvisibleAsset("ItemMisc", "GroupHugLap");
     injectInvisibleAsset("ItemArms", "GroupHugSide");
+
+    // Debug: verify injection
+    const lap  = AssetGet("Female3DCG", "ItemMisc", "GroupHugLap");
+    const side = AssetGet("Female3DCG", "ItemArms", "GroupHugSide");
+    console.log("[GroupCuddle] Asset inject result — GroupHugLap:", lap, "| GroupHugSide:", side);
 
     ActivityManager.addCustomActivity([lapHugActivity, sideHugActivity]);
     
