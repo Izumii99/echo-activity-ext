@@ -8,20 +8,29 @@ import { Tools } from "@mod-utils/Tools";
 
 function injectInvisibleAsset(groupName, assetName) {
     const group = AssetGroupGet("Female3DCG", groupName);
-    if (group) {
-        if (!AssetGet("Female3DCG", groupName, assetName)) {
-            group.Asset.push({
-                Name: assetName,
-                Description: assetName,
-                Group: group,
-                Visible: false,
-                Wear: true,
-                Value: -1,
-                Random: false,
-                Effect: []
-            });
-        }
-    }
+    if (!group) return;
+    if (AssetGet("Female3DCG", groupName, assetName)) return;
+
+    // Clone dari asset yang sudah ada sebagai template agar semua properti BC terpenuhi
+    const template = group.Asset.find(a => a.Wear) ?? group.Asset[0];
+    if (!template) return;
+
+    const cloned = { ...template,
+        Name: assetName,
+        Description: assetName,
+        Visible: false,
+        Value: -1,
+        Random: false,
+        Effect: [],
+        AllowLock: false,
+        Extended: false,
+        Restrain: false,
+        RemoveAtLogin: true,
+        Wear: true,
+        Group: group,
+        DynamicGroupName: groupName,
+    };
+    group.Asset.push(cloned);
 }
 
 /**
